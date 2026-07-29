@@ -1,308 +1,512 @@
-<title>CLtiene · Dashboard Marketing y Ventas</title>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLtiene · Presentación de Marketing y Ventas · Julio 2026</title>
 <style>
+  * { box-sizing:border-box; margin:0; padding:0; }
   :root {
-    --ink:#0b0b0b; --muted:#7d7b75; --border:#e1e0d9; --surface:#fbf9f4; --track:#eef1f6;
-    --navy:#16233d; --gold:#A9700E;
-    --good:#1D7A3E; --good-bg:#EAF7EA;
-    --warn:#A85A12; --warn-bg:#FBEBD9;
-    --crit:#A73224; --crit-bg:#FBE3DE;
-    --info:#1e5e9e; --info-bg:#E3F0FB;
+    --ink:#1a1a1a; --ink-2:#4a4a4a; --muted:#767676;
+    --border:#e5e5e5; --surface:#ffffff; --track:#f5f5f7; --bg:#f0f2f5;
+    --brand:#16233d; --brand-2:#24365f; --gold:#c58a1f;
+    --good:#1D7A3E; --good-bg:#E8F5EA; --good-light:#c5e5cb;
+    --warn:#B25F0E; --warn-bg:#FDF1E0; --warn-light:#f5d59a;
+    --crit:#B32E20; --crit-bg:#FDEBE7; --crit-light:#f5b8ae;
+    --info:#1e5e9e; --info-bg:#E8F1FB; --info-light:#b8d4ef;
     --font: -apple-system,"Segoe UI",system-ui,sans-serif;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --ink:#eef1f6; --muted:#a8a49b; --border:#2f3540; --surface:#1a1f2a; --track:#22283a;
-      --navy:#0d1727; --gold:#d9a04e;
-      --good-bg:#0f2f18; --warn-bg:#3a2410; --crit-bg:#3a1815; --info-bg:#0f2a44;
-    }
-    body { background:#0b0e14; }
+  html, body { background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.55; }
+  body { padding:20px 10px; }
+
+  /* Controls bar */
+  .controls { max-width:1100px; margin:0 auto 20px; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:0 6px; flex-wrap:wrap; }
+  .controls .nav { display:flex; gap:8px; align-items:center; }
+  .btn { background:var(--brand); color:#fff; border:none; padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:var(--brand-2); }
+  .btn.secondary { background:var(--track); color:var(--ink); }
+  .btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .slide-counter { font-size:14px; font-weight:600; color:var(--muted); padding:0 10px; }
+  .print-btn { background:var(--gold); }
+  .print-btn:hover { background:#a37217; }
+
+  /* Slide container */
+  .presentation { max-width:1100px; margin:0 auto; }
+  .slide {
+    background:var(--surface);
+    border-radius:16px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.06);
+    padding:48px 56px;
+    margin-bottom:24px;
+    min-height:640px;
+    display:none;
+    animation:fadein 0.35s ease;
   }
-  :root[data-theme="light"] {
-    --ink:#0b0b0b; --muted:#7d7b75; --border:#e1e0d9; --surface:#fbf9f4; --track:#eef1f6;
-    --good-bg:#EAF7EA; --warn-bg:#FBEBD9; --crit-bg:#FBE3DE; --info-bg:#E3F0FB;
+  .slide.active { display:block; }
+  @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  @media (max-width:700px){
+    .slide { padding:28px 22px; min-height:auto; }
   }
-  :root[data-theme="light"] body { background:#fff; }
-  :root[data-theme="dark"] {
-    --ink:#eef1f6; --muted:#a8a49b; --border:#2f3540; --surface:#1a1f2a; --track:#22283a;
-    --navy:#0d1727; --good-bg:#0f2f18; --warn-bg:#3a2410; --crit-bg:#3a1815; --info-bg:#0f2a44;
+
+  /* Slide header (label + number) */
+  .slide-label {
+    font-size:11px; font-weight:700; letter-spacing:0.15em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:8px;
   }
-  :root[data-theme="dark"] body { background:#0b0e14; }
-  * { box-sizing:border-box; }
-  body { margin:0; color:var(--ink); font-family:var(--font); font-size:14px; line-height:1.5; padding:16px; }
-  .doc { max-width:1000px; margin:0 auto; }
-  header { background:var(--navy); color:#fff; border-radius:12px; padding:22px 26px; margin-bottom:20px; }
-  .brand { font-size:13px; font-weight:700; opacity:0.85; }
-  .brand span { color:var(--gold); }
-  header h1 { font-size:26px; font-weight:720; margin:8px 0 4px; }
-  header .sub { font-size:13px; opacity:0.82; margin:0; }
-  h2 { font-size:14px; font-weight:700; margin:24px 0 12px; padding-bottom:6px; border-bottom:1px solid var(--border); color:var(--ink); text-transform:uppercase; letter-spacing:0.04em; }
-  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:10px 0; }
-  .kpi { border:1px solid var(--border); border-radius:10px; padding:14px 16px; background:var(--surface); }
-  .kpi.hero { background:var(--navy); color:#fff; border-color:transparent; }
-  .kpi.hero .k, .kpi.hero .sub { color:rgba(255,255,255,0.75); }
-  .kpi.hero .v { color:#fff; }
-  .kpi .k{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin:0 0 4px;font-weight:600;}
-  .kpi .v{font-size:24px;font-weight:720;font-variant-numeric:tabular-nums;margin:0;color:var(--ink);}
-  .kpi .sub{font-size:11px;color:var(--muted);margin:3px 0 0;}
-  .card { border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:12px; background:var(--surface); }
-  .card.good { border-left:4px solid var(--good); }
-  .card.warn { border-left:4px solid var(--warn); }
-  .card.crit { border-left:4px solid var(--crit); }
-  .card.info { border-left:4px solid var(--info); }
-  .row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; flex-wrap:wrap; gap:8px; }
-  .row h3 { font-size:15px; margin:0; font-weight:720; }
-  .badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:4px; }
+  .slide h1 { font-size:34px; font-weight:700; line-height:1.15; margin-bottom:8px; }
+  .slide h2 { font-size:24px; font-weight:700; margin-bottom:14px; }
+  .slide .lead { font-size:16px; color:var(--muted); margin-bottom:24px; }
+
+  /* Cover slide */
+  .cover {
+    background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+    color:#fff;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center;
+    padding:80px 40px;
+  }
+  .cover .brand-mark { font-size:14px; font-weight:700; letter-spacing:0.12em; opacity:0.85; }
+  .cover .brand-mark span { color:var(--gold); }
+  .cover h1 { font-size:52px; font-weight:800; margin:20px 0 12px; line-height:1.1; }
+  .cover .subtitle { font-size:20px; opacity:0.9; margin-bottom:36px; }
+  .cover .date-tag {
+    background:rgba(255,255,255,0.15); padding:10px 22px; border-radius:8px;
+    font-size:15px; font-weight:600;
+  }
+
+  /* KPI grids */
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin:16px 0 20px; }
+  .kpi { background:var(--track); border-radius:12px; padding:20px 22px; }
+  .kpi.hero { background:linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%); color:#fff; }
+  .kpi.hero .kpi-label, .kpi.hero .kpi-note { color:rgba(255,255,255,0.85); }
+  .kpi.hero .kpi-value { color:#fff; }
+  .kpi.good .kpi-value { color:var(--good); }
+  .kpi.warn .kpi-value { color:var(--warn); }
+  .kpi.crit .kpi-value { color:var(--crit); }
+  .kpi-label { font-size:11px; font-weight:600; letter-spacing:0.06em; color:var(--muted); text-transform:uppercase; margin:0 0 8px; }
+  .kpi-value { font-size:34px; font-weight:800; font-variant-numeric:tabular-nums; margin:0; line-height:1.1; }
+  .kpi-note { font-size:12.5px; color:var(--muted); margin:8px 0 0; }
+
+  /* Tables */
+  table.data { width:100%; border-collapse:collapse; font-size:14.5px; margin-top:10px; }
+  table.data th { text-align:left; padding:12px 14px; background:var(--track); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+  table.data th.n, table.data td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  table.data td { padding:12px 14px; border-bottom:1px solid var(--border); }
+  table.data tr:last-child td { border-bottom:none; }
+  table.data tr.total { background:var(--brand); color:#fff; font-weight:700; }
+  table.data tr.total td { border-bottom:none; }
+
+  /* Bars */
+  .bar-item { margin:14px 0; }
+  .bar-header { display:flex; justify-content:space-between; margin-bottom:8px; font-size:15px; }
+  .bar-name { font-weight:600; }
+  .bar-value { font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink-2); }
+  .bar-track { height:32px; background:var(--track); border-radius:8px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:8px; display:flex; align-items:center; padding:0 14px; color:#fff; font-size:13px; font-weight:700; }
+  .bar-fill.good { background:linear-gradient(90deg, var(--good) 0%, #2A9E58 100%); }
+  .bar-fill.info { background:linear-gradient(90deg, var(--info) 0%, #3182ce 100%); }
+  .bar-fill.warn { background:linear-gradient(90deg, var(--warn) 0%, #d97b25 100%); }
+
+  /* Campaign cards */
+  .card { background:var(--track); border-radius:12px; padding:20px 22px; margin-bottom:14px; }
+  .card.good { border-left:5px solid var(--good); }
+  .card.warn { border-left:5px solid var(--warn); }
+  .card.crit { border-left:5px solid var(--crit); }
+  .card.info { border-left:5px solid var(--info); }
+  .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .card-head h3 { font-size:18px; font-weight:700; }
+  .badge { font-size:11px; font-weight:700; padding:5px 12px; border-radius:20px; letter-spacing:0.03em; }
   .badge.good { background:var(--good-bg); color:var(--good); }
   .badge.warn { background:var(--warn-bg); color:var(--warn); }
   .badge.crit { background:var(--crit-bg); color:var(--crit); }
   .badge.info { background:var(--info-bg); color:var(--info); }
-  table.stats { width:100%; border-collapse:collapse; font-size:13px; margin-top:6px; }
-  table.stats td { padding:4px 0; }
-  table.stats td.label { color:var(--muted); }
-  table.stats td.val { text-align:right; font-weight:700; font-variant-numeric:tabular-nums; }
-  table.data { width:100%; border-collapse:collapse; font-size:12.5px; margin-top:8px; }
-  table.data th { text-align:left; padding:8px 10px; background:var(--track); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted); }
-  table.data td { padding:8px 10px; border-bottom:1px solid var(--border); }
-  table.data td.n { text-align:right; font-variant-numeric:tabular-nums; }
-  table.data tr:last-child td { border-bottom:none; }
-  .callout { border-radius:10px; padding:12px 14px; margin:10px 0; font-size:13px; line-height:1.55; }
-  .callout.info { background:var(--info-bg); border:1px solid var(--info); color:var(--info); }
-  .callout.warn { background:var(--warn-bg); border:1px solid var(--warn); color:var(--warn); }
-  .callout.good { background:var(--good-bg); border:1px solid var(--good); color:var(--good); }
-  .callout b { font-weight:720; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  @media (max-width:600px){ .grid2 { grid-template-columns:1fr; } }
-  .bar-row { display:flex; align-items:center; gap:10px; margin:6px 0; }
-  .bar-row .name { flex:0 0 130px; font-size:12.5px; font-weight:600; }
-  .bar-row .bar { flex:1; height:22px; background:var(--track); border-radius:4px; overflow:hidden; position:relative; }
-  .bar-row .bar .fill { height:100%; background:var(--navy); border-radius:4px; }
-  .bar-row .val { flex:0 0 60px; text-align:right; font-weight:700; font-variant-numeric:tabular-nums; font-size:13px; }
-  footer { margin-top:20px; padding-top:12px; border-top:1px solid var(--border); font-size:11px; color:var(--muted); }
+  .stats-row { display:flex; justify-content:space-between; padding:6px 0; font-size:14.5px; border-bottom:1px solid var(--border); }
+  .stats-row:last-child { border-bottom:none; }
+  .stats-row .label { color:var(--ink-2); }
+  .stats-row .value { font-weight:700; font-variant-numeric:tabular-nums; }
+  .stats-row .value.good { color:var(--good); }
+  .stats-row .value.crit { color:var(--crit); }
+  .note { margin-top:10px; font-size:13.5px; color:var(--muted); }
+
+  /* Callouts */
+  .callout { border-radius:12px; padding:20px 24px; margin:14px 0; font-size:15px; line-height:1.65; }
+  .callout.good { background:var(--good-bg); border:1px solid var(--good-light); color:#0d3a1e; }
+  .callout.warn { background:var(--warn-bg); border:1px solid var(--warn-light); color:#5a2f06; }
+  .callout.info { background:var(--info-bg); border:1px solid var(--info-light); color:#0e3a63; }
+  .callout .title { font-size:16px; font-weight:700; margin-bottom:10px; display:block; }
+  .callout ul { margin:8px 0 0; padding-left:22px; }
+  .callout li { margin:6px 0; }
+
+  /* Grid 2 cols */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:700px){ .grid-2 { grid-template-columns:1fr; } }
+
+  /* Glossary */
+  .glossary dt { font-weight:700; color:var(--ink); margin-top:14px; font-size:15px; }
+  .glossary dt:first-child { margin-top:0; }
+  .glossary dd { color:var(--ink-2); font-size:14px; margin:4px 0 0; }
+
+  /* Footer */
+  .slide-footer { margin-top:32px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); text-align:center; }
+
+  /* Print */
+  @media print {
+    body { background:#fff; padding:0; }
+    .controls { display:none; }
+    .presentation { max-width:100%; }
+    .slide { display:block !important; page-break-after:always; box-shadow:none; border-radius:0; min-height:auto; margin-bottom:0; padding:24px 30px; }
+    .slide.cover { padding:80px 40px; }
+  }
 </style>
+</head>
+<body>
 
-<div class="doc">
-  <header>
-    <div class="brand">CL<span>TIENE</span> · Dashboard Ventas y Marketing</div>
-    <h1>Reporte de julio 2026</h1>
-    <p class="sub">Corte: 29 jul 2026 · Ventas + Campañas Meta Ads + Google Ads</p>
-  </header>
+<div class="controls">
+  <div class="nav">
+    <button class="btn secondary" id="prevBtn" onclick="prevSlide()">← Anterior</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button class="btn" id="nextBtn" onclick="nextSlide()">Siguiente →</button>
+  </div>
+  <button class="btn print-btn" onclick="window.print()">🖨️ Descargar / Imprimir</button>
+</div>
 
-  <h2>📈 Resumen ejecutivo — Julio</h2>
-  <div class="kpis">
-    <div class="kpi hero"><p class="k">Ventas del mes</p><p class="v">9</p><p class="sub">Clientes cerrados</p></div>
-    <div class="kpi hero"><p class="k">Ingresos julio</p><p class="v">$549.200</p><p class="sub">COP</p></div>
-    <div class="kpi"><p class="k">Ticket promedio</p><p class="v">$61.022</p><p class="sub">COP por venta</p></div>
-    <div class="kpi"><p class="k">Leads generados</p><p class="v">~470</p><p class="sub">Meta + Google</p></div>
-    <div class="kpi"><p class="k">Costo por venta</p><p class="v">$203.678</p><p class="sub">Inversión ÷ ventas</p></div>
-    <div class="kpi"><p class="k">Conversión lead→venta</p><p class="v">1,9%</p><p class="sub">Oportunidad de mejora</p></div>
+<div class="presentation">
+
+<!-- SLIDE 1: PORTADA -->
+<div class="slide cover active">
+  <div class="brand-mark">CL<span>TIENE</span></div>
+  <h1>Reporte de<br>Marketing y Ventas</h1>
+  <p class="subtitle">Presentación ejecutiva</p>
+  <div class="date-tag">📅 Julio 2026 · Corte al 29 de julio</div>
+</div>
+
+<!-- SLIDE 2: RESUMEN EJECUTIVO -->
+<div class="slide">
+  <div class="slide-label">Slide 2 · Resumen ejecutivo</div>
+  <h1>📊 Los números del mes</h1>
+  <p class="lead">Los indicadores más importantes en un vistazo.</p>
+
+  <div class="kpi-row">
+    <div class="kpi hero">
+      <p class="kpi-label">Ventas cerradas</p>
+      <p class="kpi-value">9</p>
+      <p class="kpi-note">Clientes que compraron un plan</p>
+    </div>
+    <div class="kpi hero">
+      <p class="kpi-label">Ingresos del mes</p>
+      <p class="kpi-value">$549.200</p>
+      <p class="kpi-note">Pesos colombianos</p>
+    </div>
   </div>
 
-  <h2>💰 Ventas por plan (julio)</h2>
-  <div class="card">
-    <div class="bar-row">
-      <span class="name">Plan Mascotas</span>
-      <div class="bar"><div class="fill" style="width:100%;background:var(--good)"></div></div>
-      <span class="val">5</span>
+  <div class="kpi-row">
+    <div class="kpi">
+      <p class="kpi-label">Ticket promedio</p>
+      <p class="kpi-value">$61.022</p>
+      <p class="kpi-note">Valor promedio por venta</p>
     </div>
-    <div class="bar-row">
-      <span class="name">Plan Vial</span>
-      <div class="bar"><div class="fill" style="width:60%;background:var(--info)"></div></div>
-      <span class="val">3</span>
+    <div class="kpi">
+      <p class="kpi-label">Personas interesadas</p>
+      <p class="kpi-value">~470</p>
+      <p class="kpi-note">Contactos generados por publicidad</p>
     </div>
-    <div class="bar-row">
-      <span class="name">Plan Premium</span>
-      <div class="bar"><div class="fill" style="width:20%;background:var(--warn)"></div></div>
-      <span class="val">1</span>
+    <div class="kpi">
+      <p class="kpi-label">Conversión</p>
+      <p class="kpi-value">1,9%</p>
+      <p class="kpi-note">De cada 100 interesados, ~2 compran</p>
     </div>
   </div>
 
   <div class="callout good">
-    <b>Insight:</b> Plan Mascotas es el más vendido (56% del volumen). Coincide con que la campaña de Meta "Mascota Junio III" es la de mejor CPL ($2.167) — <b>hay alineación clara entre el creativo estrella y las ventas reales</b>.
+    <span class="title">💡 Mensaje principal del mes</span>
+    Ventas concentradas en Plan Mascotas (56%) y equipo comercial liderado por Rosselin Ibarra (44% de las ventas). Publicidad rindiendo, con oportunidad grande de mejorar el cierre de ventas.
+  </div>
+</div>
+
+<!-- SLIDE 3: VENTAS POR PLAN -->
+<div class="slide">
+  <div class="slide-label">Slide 3 · Ventas del mes</div>
+  <h1>💰 Ventas por plan</h1>
+  <p class="lead">Cuántos clientes compraron cada plan y cuánto generó cada uno.</p>
+
+  <div style="margin-bottom:20px;">
+    <div class="bar-item">
+      <div class="bar-header">
+        <span class="bar-name">🐾 Plan Mascotas</span>
+        <span class="bar-value">5 ventas · $288.600</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill good" style="width:100%">56% de las ventas</div></div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-header">
+        <span class="bar-name">🚗 Plan Vial</span>
+        <span class="bar-value">3 ventas · $131.700</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill info" style="width:60%">33%</div></div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-header">
+        <span class="bar-name">⭐ Plan Premium</span>
+        <span class="bar-value">1 venta · $128.900</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill warn" style="width:20%">11%</div></div>
+    </div>
   </div>
 
-  <h2>💵 Ingresos por plan</h2>
   <table class="data">
     <thead>
       <tr><th>Plan</th><th class="n">Ventas</th><th class="n">Ingresos</th><th class="n">Ticket promedio</th></tr>
     </thead>
     <tbody>
-      <tr><td><b>Plan Mascotas</b></td><td class="n">5</td><td class="n">$288.600</td><td class="n">$57.720</td></tr>
+      <tr><td><strong>Plan Mascotas</strong></td><td class="n">5</td><td class="n">$288.600</td><td class="n">$57.720</td></tr>
       <tr><td>Plan Vial</td><td class="n">3</td><td class="n">$131.700</td><td class="n">$43.900</td></tr>
       <tr><td>Plan Premium</td><td class="n">1</td><td class="n">$128.900</td><td class="n">$128.900</td></tr>
-      <tr style="background:var(--track);font-weight:700"><td>TOTAL</td><td class="n">9</td><td class="n">$549.200</td><td class="n">$61.022</td></tr>
+      <tr class="total"><td>TOTAL JULIO</td><td class="n">9</td><td class="n">$549.200</td><td class="n">$61.022</td></tr>
     </tbody>
   </table>
+</div>
 
-  <h2>🏆 Ranking de asesores</h2>
+<!-- SLIDE 4: EQUIPO COMERCIAL -->
+<div class="slide">
+  <div class="slide-label">Slide 4 · Equipo comercial</div>
+  <h1>🏆 Ranking de asesores</h1>
+  <p class="lead">Ventas cerradas por cada asesor durante julio.</p>
+
   <table class="data">
     <thead>
-      <tr><th>Asesor</th><th class="n">Ventas</th><th class="n">Ingresos</th></tr>
+      <tr><th>Posición</th><th>Asesor(a)</th><th class="n">Ventas</th><th class="n">Ingresos generados</th><th class="n">% del total</th></tr>
     </thead>
     <tbody>
-      <tr><td>🥇 Rosselin Ibarra</td><td class="n">4</td><td class="n">$307.700</td></tr>
-      <tr><td>🥈 Jimmy Rusinque</td><td class="n">2</td><td class="n">$109.800</td></tr>
-      <tr><td>🥈 Andres Barrera</td><td class="n">2</td><td class="n">$82.800</td></tr>
-      <tr><td>Paula Naranjo</td><td class="n">1</td><td class="n">$48.900</td></tr>
+      <tr><td>🥇 1°</td><td><strong>Rosselin Ibarra</strong></td><td class="n">4</td><td class="n">$307.700</td><td class="n">56%</td></tr>
+      <tr><td>🥈 2°</td><td>Jimmy Rusinque</td><td class="n">2</td><td class="n">$109.800</td><td class="n">20%</td></tr>
+      <tr><td>🥈 2°</td><td>Andres Barrera</td><td class="n">2</td><td class="n">$82.800</td><td class="n">15%</td></tr>
+      <tr><td>4°</td><td>Paula Naranjo</td><td class="n">1</td><td class="n">$48.900</td><td class="n">9%</td></tr>
     </tbody>
   </table>
 
-  <h2>🌍 Ventas por ciudad</h2>
-  <table class="data">
-    <thead>
-      <tr><th>Ciudad</th><th class="n">Ventas</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Medellín</td><td class="n">2</td></tr>
-      <tr><td>Bogotá</td><td class="n">2</td></tr>
-      <tr><td>Itagüí</td><td class="n">1</td></tr>
-      <tr><td>Risaralda</td><td class="n">1</td></tr>
-      <tr><td>Antioquia</td><td class="n">1</td></tr>
-      <tr><td>Cartagena</td><td class="n">1</td></tr>
-      <tr><td>Ibagué</td><td class="n">1</td></tr>
-    </tbody>
-  </table>
+  <div class="callout good">
+    <span class="title">💡 Insight</span>
+    Rosselin Ibarra concentra el 56% de las ventas del mes. Vale la pena identificar qué está haciendo diferente (guiones, horarios, seguimiento) y replicarlo con el resto del equipo.
+  </div>
 
-  <h2>📢 Meta Ads · Top campañas (últimos 7 días)</h2>
+  <h2 style="margin-top:28px;">🌍 Ciudades con más ventas</h2>
+  <div class="grid-2">
+    <table class="data">
+      <thead><tr><th>Ciudad</th><th class="n">Ventas</th></tr></thead>
+      <tbody>
+        <tr><td>Medellín</td><td class="n">2</td></tr>
+        <tr><td>Bogotá</td><td class="n">2</td></tr>
+        <tr><td>Itagüí</td><td class="n">1</td></tr>
+        <tr><td>Cartagena</td><td class="n">1</td></tr>
+      </tbody>
+    </table>
+    <table class="data">
+      <thead><tr><th>Ciudad</th><th class="n">Ventas</th></tr></thead>
+      <tbody>
+        <tr><td>Ibagué</td><td class="n">1</td></tr>
+        <tr><td>Risaralda</td><td class="n">1</td></tr>
+        <tr><td>Antioquia (otras)</td><td class="n">1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 5: META ADS -->
+<div class="slide">
+  <div class="slide-label">Slide 5 · Publicidad en redes sociales</div>
+  <h1>📢 Meta Ads (Facebook e Instagram)</h1>
+  <p class="lead">Últimos 7 días · Inversión total: ~$1.807.234 COP · Personas interesadas: 470</p>
 
   <div class="card good">
-    <div class="row">
-      <h3>Mascota Junio III</h3>
+    <div class="card-head">
+      <h3>🐾 Mascota Junio III</h3>
       <span class="badge good">LA ESTRELLA</span>
     </div>
-    <table class="stats">
-      <tr><td class="label">Leads</td><td class="val">216</td></tr>
-      <tr><td class="label">CPL</td><td class="val" style="color:var(--good)">$2.167</td></tr>
-      <tr><td class="label">Inversión</td><td class="val">$468.092</td></tr>
-    </table>
+    <div class="stats-row"><span class="label">Personas interesadas</span><span class="value">216</span></div>
+    <div class="stats-row"><span class="label">Costo por persona</span><span class="value good">$2.167</span></div>
+    <div class="stats-row"><span class="label">Inversión</span><span class="value">$468.092</span></div>
+    <p class="note">✅ La campaña más eficiente de todas.</p>
   </div>
 
   <div class="card good">
-    <div class="row">
-      <h3>WhatsApp Salud Mundial - Copia</h3>
+    <div class="card-head">
+      <h3>❤️ Salud Mundial (Copia)</h3>
       <span class="badge good">SÓLIDA</span>
     </div>
-    <table class="stats">
-      <tr><td class="label">Leads</td><td class="val">103</td></tr>
-      <tr><td class="label">CPL</td><td class="val">$4.279</td></tr>
-      <tr><td class="label">Inversión</td><td class="val">$440.771</td></tr>
-    </table>
+    <div class="stats-row"><span class="label">Personas interesadas</span><span class="value">103</span></div>
+    <div class="stats-row"><span class="label">Costo por persona</span><span class="value">$4.279</span></div>
+    <div class="stats-row"><span class="label">Inversión</span><span class="value">$440.771</span></div>
+    <p class="note">✅ Rendimiento estable.</p>
   </div>
 
-  <div class="card warn">
-    <div class="row">
-      <h3>WhatsApp Movilidad Julio</h3>
-      <span class="badge warn">VIGILAR</span>
+  <div class="grid-2">
+    <div class="card warn">
+      <div class="card-head">
+        <h3>🚗 Movilidad Julio</h3>
+        <span class="badge warn">VIGILAR</span>
+      </div>
+      <div class="stats-row"><span class="label">Personas interesadas</span><span class="value">71</span></div>
+      <div class="stats-row"><span class="label">Costo por persona</span><span class="value">$5.409</span></div>
+      <div class="stats-row"><span class="label">Inversión</span><span class="value">$384.011</span></div>
+      <p class="note">⚠️ Costo subiendo.</p>
     </div>
-    <table class="stats">
-      <tr><td class="label">Leads</td><td class="val">71</td></tr>
-      <tr><td class="label">CPL</td><td class="val">$5.409</td></tr>
-      <tr><td class="label">Inversión</td><td class="val">$384.011</td></tr>
-    </table>
+
+    <div class="card crit">
+      <div class="card-head">
+        <h3>❤️ Salud Junio</h3>
+        <span class="badge crit">CAMBIAR</span>
+      </div>
+      <div class="stats-row"><span class="label">Personas interesadas</span><span class="value">80</span></div>
+      <div class="stats-row"><span class="label">Costo por persona</span><span class="value crit">$6.430</span></div>
+      <div class="stats-row"><span class="label">Inversión</span><span class="value">$514.360</span></div>
+      <p class="note">🔴 Anuncio cansado, hay que refrescar.</p>
+    </div>
   </div>
+</div>
 
-  <div class="card crit">
-    <div class="row">
-      <h3>WhatsApp Salud Junio</h3>
-      <span class="badge crit">REFRESCAR</span>
+<!-- SLIDE 6: GOOGLE ADS -->
+<div class="slide">
+  <div class="slide-label">Slide 6 · Publicidad en Google</div>
+  <h1>🔍 Google Ads · Nueva estrategia</h1>
+  <p class="lead">Piloto de 2 semanas en Google Search · Presupuesto: $1.000.000 COP · Inicio: 28-29 julio</p>
+
+  <div class="grid-2">
+    <div class="card good">
+      <div class="card-head">
+        <h3>🚗 Movilidad</h3>
+        <span class="badge good">ACTIVA</span>
+      </div>
+      <div class="stats-row"><span class="label">Presupuesto (14 días)</span><span class="value">$333.000</span></div>
+      <div class="stats-row"><span class="label">Gastado hoy</span><span class="value">$6.244</span></div>
+      <div class="stats-row"><span class="label">Vieron el anuncio</span><span class="value">98</span></div>
+      <div class="stats-row"><span class="label">Clics</span><span class="value">10</span></div>
     </div>
-    <table class="stats">
-      <tr><td class="label">Leads</td><td class="val">80</td></tr>
-      <tr><td class="label">CPL</td><td class="val" style="color:var(--crit)">$6.430</td></tr>
-      <tr><td class="label">Inversión</td><td class="val">$514.360</td></tr>
-    </table>
-  </div>
 
-  <h2>🔍 Google Ads · 3 campañas nuevas</h2>
-
-  <div class="card good">
-    <div class="row">
-      <h3>GOOG_Search_Movilidad</h3>
-      <span class="badge good">EN VIVO · Mejor arranque</span>
+    <div class="card good">
+      <div class="card-head">
+        <h3>🐾 Mascotas</h3>
+        <span class="badge good">ACTIVA</span>
+      </div>
+      <div class="stats-row"><span class="label">Presupuesto (14 días)</span><span class="value">$333.000</span></div>
+      <div class="stats-row"><span class="label">Gastado hoy</span><span class="value">$6.198</span></div>
+      <div class="stats-row"><span class="label">Vieron el anuncio</span><span class="value">133</span></div>
+      <div class="stats-row"><span class="label">Clics</span><span class="value">11</span></div>
     </div>
-    <table class="stats">
-      <tr><td class="label">Presupuesto (14 días)</td><td class="val">$333.000</td></tr>
-      <tr><td class="label">Costo hoy</td><td class="val">$6.244</td></tr>
-      <tr><td class="label">Clics</td><td class="val">10</td></tr>
-      <tr><td class="label">Impresiones</td><td class="val">98</td></tr>
-      <tr><td class="label">Conversiones GA</td><td class="val">23</td></tr>
-    </table>
-  </div>
-
-  <div class="card good">
-    <div class="row">
-      <h3>GOOG_Search_Mascotas</h3>
-      <span class="badge good">EN VIVO</span>
-    </div>
-    <table class="stats">
-      <tr><td class="label">Presupuesto (14 días)</td><td class="val">$333.000</td></tr>
-      <tr><td class="label">Costo hoy</td><td class="val">$6.198</td></tr>
-      <tr><td class="label">Clics</td><td class="val">11</td></tr>
-      <tr><td class="label">Impresiones</td><td class="val">133</td></tr>
-      <tr><td class="label">Conversiones GA</td><td class="val">13</td></tr>
-    </table>
   </div>
 
   <div class="card info">
-    <div class="row">
-      <h3>GOOG_Search_Salud</h3>
-      <span class="badge info">RECIÉN PUBLICADA HOY</span>
+    <div class="card-head">
+      <h3>❤️ Salud (recién publicada hoy)</h3>
+      <span class="badge info">EN ARRANQUE</span>
     </div>
-    <table class="stats">
-      <tr><td class="label">Presupuesto (14 días)</td><td class="val">$333.000</td></tr>
-      <tr><td class="label">Estado</td><td class="val">Activa</td></tr>
-      <tr><td class="label">Nota</td><td class="val" style="text-align:right;font-weight:normal">Copy ajustado ("asistencia/bienestar")</td></tr>
-    </table>
+    <div class="stats-row"><span class="label">Presupuesto (14 días)</span><span class="value">$333.000</span></div>
+    <div class="stats-row"><span class="label">Estado</span><span class="value">Activa desde hoy</span></div>
+    <p class="note">ℹ️ Se ajustó el lenguaje del anuncio a "asistencia y bienestar" para pasar la revisión editorial de Google. Recibirá datos en 24-48 horas.</p>
   </div>
 
-  <h2>📊 Comportamiento del usuario (GA4)</h2>
-  <div class="grid2">
-    <div class="kpi"><p class="k">Clics a WhatsApp</p><p class="v">11</p><p class="sub">91% de las conversiones</p></div>
-    <div class="kpi"><p class="k">Formularios llenados</p><p class="v">1</p><p class="sub">Solo Mascotas · Baja conversión</p></div>
+  <div class="callout info">
+    <span class="title">🌐 Comportamiento del usuario</span>
+    <ul>
+      <li><b>91% prefiere WhatsApp</b> para contactarnos (11 clics al chat vs 1 formulario llenado)</li>
+      <li>El formulario web está subutilizado — considerar simplificarlo o eliminarlo</li>
+    </ul>
   </div>
+</div>
 
-  <h2>🚦 Fuentes de tráfico</h2>
-  <div class="kpis">
-    <div class="kpi"><p class="k">Directo</p><p class="v">57%</p><p class="sub">171 sesiones</p></div>
-    <div class="kpi"><p class="k">Orgánico (SEO)</p><p class="v">24%</p><p class="sub">71 sesiones</p></div>
-    <div class="kpi"><p class="k">Google Ads</p><p class="v">12%</p><p class="sub">35 sesiones</p></div>
-    <div class="kpi"><p class="k">Otros</p><p class="v">7%</p><p class="sub">21 sesiones</p></div>
-  </div>
-
-  <h2>💡 Análisis y próximos pasos</h2>
+<!-- SLIDE 7: CONCLUSIONES -->
+<div class="slide">
+  <div class="slide-label">Slide 7 · Conclusiones</div>
+  <h1>💡 Conclusiones del mes</h1>
+  <p class="lead">Lo que funciona y lo que hay que mejorar de cara a agosto.</p>
 
   <div class="callout good">
-    <b>Lo que está funcionando:</b>
-    <ul style="margin:6px 0 0 0;padding-left:20px">
-      <li><b>Plan Mascotas domina</b> — 56% de las ventas y la campaña con mejor CPL en Meta ($2.167)</li>
-      <li><b>WhatsApp es EL canal</b> — 100% de las ventas cierran por chat, 91% de los leads llegan por WhatsApp</li>
-      <li><b>Rosselin Ibarra es la top asesora</b> — 44% de las ventas del mes son suyas</li>
-      <li><b>Google Ads arrancó bien</b> — Movilidad ya genera 23 conversiones en su primer día</li>
+    <span class="title">✅ Lo que está funcionando</span>
+    <ul>
+      <li><b>Plan Mascotas domina</b> — 56% de las ventas y campaña estrella en publicidad.</li>
+      <li><b>WhatsApp es EL canal comercial</b> — 100% de ventas cierran por chat.</li>
+      <li><b>Rosselin Ibarra lidera</b> con el 56% de las ventas.</li>
+      <li><b>Google Ads arrancó bien</b> — 23 conversiones detectadas en su primer día.</li>
     </ul>
   </div>
 
   <div class="callout warn">
-    <b>Oportunidades de mejora:</b>
-    <ul style="margin:6px 0 0 0;padding-left:20px">
-      <li><b>Conversión lead→venta baja (1,9%)</b> — de 470 leads en 7 días, solo 9 se cerraron en el mes. Vale investigar el seguimiento comercial post-chat</li>
-      <li><b>WhatsApp Salud Junio necesita refrescar</b> — CPL de $6.430 (3× el de Mascotas), señales de fatiga</li>
-      <li><b>Formulario poco efectivo</b> — 1 lead de ~60 visitas (1,6%). Considerar simplificar o eliminar</li>
-      <li><b>Plan Premium subvendido</b> — solo 1 venta a pesar de mayor ticket ($128.900). Falta campaña específica</li>
+    <span class="title">⚠️ Oportunidades de mejora</span>
+    <ul>
+      <li><b>Conversión de lead a venta baja (1,9%)</b> — De 470 interesados, solo 9 ventas. Hay que fortalecer el seguimiento comercial post-chat.</li>
+      <li><b>Refrescar "Salud Junio"</b> — Su costo por lead es 3× el de Mascotas. Está fatigada.</li>
+      <li><b>Plan Premium desaprovechado</b> — Solo 1 venta pese al mejor ticket. Falta campaña específica.</li>
     </ul>
   </div>
+</div>
+
+<!-- SLIDE 8: PLAN & GLOSARIO -->
+<div class="slide">
+  <div class="slide-label">Slide 8 · Próximos pasos</div>
+  <h1>🗓️ Plan a fin de mes y glosario</h1>
 
   <div class="callout info">
-    <b>Plan a fin de mes (30-31 jul):</b>
-    <ul style="margin:6px 0 0 0;padding-left:20px">
-      <li>Monitorear rendimiento de Google Ads con 2 días completos de data</li>
-      <li>Refrescar creativo de WhatsApp Salud Junio (nueva campaña, no editar activa)</li>
-      <li>Corte de cierre de mes con proyección de agosto</li>
-      <li>Revisar por qué el formulario no convierte (mostrar solo botón WhatsApp)</li>
+    <span class="title">🎯 Acciones para el 30-31 julio</span>
+    <ul>
+      <li>Monitorear las 3 campañas de Google Ads con datos completos.</li>
+      <li>Crear nueva versión creativa para "Salud Junio" en Meta.</li>
+      <li>Reporte de cierre de mes con proyección de agosto.</li>
+      <li>Analizar por qué el formulario no convierte.</li>
     </ul>
   </div>
 
-  <footer>
-    Dashboard CLtiene · 29 jul 2026 · Fuentes: base de ventas manual + Google Ads API + Meta Ads (Supermetrics) + GA4.<br>
-    Ventana Meta: últimos 7 días. Ventana Google: desde inicio de campañas (28 jul). Ventana ventas: julio completo.<br>
-    Próxima actualización: 31 jul (cierre de mes).
-  </footer>
+  <h2 style="margin-top:24px;">📖 Glosario rápido</h2>
+  <dl class="glossary">
+    <dt>Lead / Persona interesada</dt>
+    <dd>Alguien que hizo clic en un anuncio o inició un chat. Todavía no es cliente, es un contacto para trabajar.</dd>
+
+    <dt>CPL (Costo por Lead)</dt>
+    <dd>Cuánto nos cuesta conseguir un contacto interesado. Más bajo = mejor.</dd>
+
+    <dt>Ticket promedio</dt>
+    <dd>Cuánto paga en promedio cada cliente. Ingresos ÷ número de ventas.</dd>
+
+    <dt>Tasa de conversión (lead → venta)</dt>
+    <dd>De cada 100 interesados, cuántos compran. En julio: 1,9%. Ideal: 5-10%.</dd>
+
+    <dt>Fatiga creativa</dt>
+    <dd>Cuando un anuncio se muestra tanto que la gente lo ignora. Solución: crear versión nueva.</dd>
+  </dl>
+
+  <div class="slide-footer">
+    <p><strong>Reporte creado por Claude AI</strong></p>
+    <p>CLtiene · Julio 2026 · Datos de Ventas + Meta Ads + Google Ads + Google Analytics 4</p>
+    <p>Próxima actualización: 31 de julio (cierre de mes)</p>
+  </div>
 </div>
+
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function showSlide(idx) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    counter.textContent = `${idx + 1} / ${totalSlides}`;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === totalSlides - 1;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; showSlide(currentSlide); } }
+  function prevSlide() { if (currentSlide > 0) { currentSlide--; showSlide(currentSlide); } }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>
