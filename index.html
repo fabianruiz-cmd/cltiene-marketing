@@ -45,15 +45,38 @@
   }
   .slide {
     background:var(--surface);
-    padding:48px 56px;
+    padding:48px 56px 90px;
     min-height:680px;
     flex:0 0 100%;
     width:100%;
+    position:relative;
   }
 
   @media (max-width:700px){
-    .slide { padding:28px 22px; min-height:auto; }
+    .slide { padding:28px 22px 90px; min-height:auto; }
   }
+
+  /* Small footer on every slide */
+  .mini-footer {
+    position:absolute;
+    bottom:16px; left:56px; right:56px;
+    padding-top:12px;
+    border-top:1px solid var(--border);
+    font-size:10.5px;
+    color:var(--muted);
+    line-height:1.5;
+    text-align:center;
+  }
+  .mini-footer .credit { font-weight:700; color:var(--brand); }
+  .mini-footer .sep { margin:0 8px; opacity:0.5; }
+  @media (max-width:700px){
+    .mini-footer { left:22px; right:22px; font-size:9.5px; }
+  }
+  .slide.cover .mini-footer {
+    border-top-color:rgba(255,255,255,0.2);
+    color:rgba(255,255,255,0.8);
+  }
+  .slide.cover .mini-footer .credit { color:var(--gold); }
 
   /* Slide header (label + number) */
   .slide-label {
@@ -481,17 +504,23 @@
     <dd>Cuando un anuncio se muestra tanto que la gente lo ignora. Solución: crear versión nueva.</dd>
   </dl>
 
-  <div class="slide-footer">
-    <p><strong>Reporte creado por Claude AI</strong></p>
-    <p>CLtiene · Julio 2026 · Datos de Ventas + Meta Ads + Google Ads + Google Analytics 4</p>
-    <p>Próxima actualización: 31 de julio (cierre de mes)</p>
-  </div>
 </div>
 
 </div>
 </div>
 
 <script>
+  // Inject mini-footer into every slide
+  const footerHTML = `<div class="mini-footer">
+    <span class="credit">Creado por Claude y Supermetrics</span>
+    <span class="sep">·</span> CLtiene · 29 jul 2026
+    <span class="sep">·</span> Fuentes: ventas manual + Google Ads API + Meta Ads + GA4
+    <br>
+    Ventana Meta: últimos 7 días · Ventana Google: desde 28 jul · Ventana ventas: julio completo
+    <span class="sep">·</span> Próxima actualización: 31 jul (cierre de mes)
+  </div>`;
+  document.querySelectorAll('.slide').forEach(s => s.insertAdjacentHTML('beforeend', footerHTML));
+
   let currentSlide = 0;
   const track = document.getElementById('slidesTrack');
   const totalSlides = document.querySelectorAll('.slide').length;
